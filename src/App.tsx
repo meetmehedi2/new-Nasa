@@ -990,7 +990,7 @@ export const App: React.FC = () => {
           isOpen={isChatbotOpen}
           onOpen={() => setIsChatbotOpen(true)}
           onClose={() => setIsChatbotOpen(false)}
-          floatingMode={true}
+          floatingMode={route !== 'simulators'}
           initialMode="mentor"
           floatingOffsetBottom={route === 'mission' ? 96 : 24}
           mentorContext={{

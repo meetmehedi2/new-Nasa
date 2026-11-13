@@ -85,7 +85,7 @@ export const LearningHubModal: React.FC<LearningHubModalProps> = ({
   onOpenLeaderboard,
 }) => {
   const [activeTab, setActiveTab] = useState<HubTab>(initialTab || 'OR_GRAPH');
-  const [notebookModuleId, setNotebookModuleId] = useState<number | 'ALL'>('ALL');
+  const [notebookModuleId, setNotebookModuleId] = useState<number>(1);
   const [comicMode, setComicMode] = useState<'ISSUES' | 'DILEMMAS'>('ISSUES');
   const [isComicModalOpen, setIsComicModalOpen] = useState<boolean>(false);
   const [isGoogleFlowModalOpen, setIsGoogleFlowModalOpen] = useState<boolean>(false);
@@ -407,50 +407,13 @@ export const LearningHubModal: React.FC<LearningHubModalProps> = ({
                             transition: 'all 0.2s ease'
                           }}
                         >
-                          {/* Top Visual Comic Cover Preview */}
-                          <div 
-                            style={{ 
-                              position: 'relative', 
-                              width: '100%', 
-                              height: '300px', 
-                              background: '#020617', 
-                              borderBottom: '1px solid rgba(255,255,255,0.08)', 
-                              overflow: 'hidden',
-                              cursor: 'pointer' 
-                            }}
-                            onClick={() => {
-                              soundFx.playClick(900);
-                              setActiveComicIssueId(issue.id);
-                              setComicModalMode('reader');
-                              setIsComicModalOpen(true);
-                            }}
-                            title={`Click to read Issue #${issue.issueNumber}: ${issue.title}`}
-                          >
-                            <img 
-                              src={`${import.meta.env.BASE_URL}comics/covers/cover_issue_${issue.issueNumber}.jpg`}
-                              alt={issue.title}
-                              style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'cover', 
-                                objectPosition: 'top center',
-                                display: 'block',
-                                transition: 'transform 0.3s ease'
-                              }}
-                              className="comic-card-cover-img"
-                              onError={(e) => {
-                                (e.currentTarget as HTMLElement).style.display = 'none';
-                                const fallback = (e.currentTarget.parentElement?.querySelector('.comic-cover-fallback') as HTMLElement);
-                                if (fallback) fallback.style.display = 'block';
-                              }}
+                          {/* Top Visual Artwork Cover Preview */}
+                          <div style={{ position: 'relative', width: '100%', height: '150px', background: '#020617', borderBottom: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+                            <ComicVisualArtwork
+                              issueNumber={issue.issueNumber}
+                              panelNumber={1}
+                              sceneType={issue.pages[0]?.panels[0]?.sceneType}
                             />
-                            <div className="comic-cover-fallback" style={{ display: 'none', width: '100%', height: '100%' }}>
-                              <ComicVisualArtwork 
-                                issueNumber={issue.issueNumber} 
-                                panelNumber={1} 
-                                sceneType={issue.pages[0]?.panels[0]?.sceneType} 
-                              />
-                            </div>
                             {/* Overlay Badge */}
                             <div style={{ 
                               position: 'absolute', 
@@ -692,11 +655,6 @@ export const LearningHubModal: React.FC<LearningHubModalProps> = ({
             <HandwrittenNotebookView
               initialModuleId={notebookModuleId}
               onLaunchMission={onLaunchMission}
-              onOpenComic={(issueId) => {
-                setActiveComicIssueId(issueId);
-                setComicModalMode('reader');
-                setIsComicModalOpen(true);
-              }}
             />
           )}
 

@@ -1,50 +1,33 @@
-# 🛰️ NASA Data & Resource Attribution
+# Jr_AstroCamp — Data Sources & Attribution
 
-**Jr_AstroCamp · Team Mysterio**  
-**NASA International Space Apps Challenge 2026**
+Jr_AstroCamp combines live API responses, bundled reference content, and simplified game values. It is an educational project, not a live telemetry system or a high-fidelity mission simulator.
 
-This document details the NASA open datasets, mission telemetry bounds, historical archives, and scientific models integrated into **Jr_AstroCamp**.
+## NASA APIs used by the app
 
----
+| Source | Link | How it is used |
+| --- | --- | --- |
+| Astronomy Picture of the Day (APOD) | [NASA APOD API](https://api.nasa.gov/planetary/apod) | In the **NASA Live Observatory** panel, fills the daily-image card with the image, title, date, copyright credit, and explanation. The image can be opened at its high-resolution URL. A bundled sample is used if the request fails. |
+| Near Earth Object Web Service (NeoWs) | [NASA NeoWs feed](https://api.nasa.gov/neo/rest/v1/feed) | In the same panel's **Near-Earth Asteroid Radar**, lists up to six objects from the current day's feed with name, estimated diameter, potentially-hazardous flag, approach date, miss distance, and relative speed. Sample records are used if the feed is unavailable or empty. |
+| NASA Image and Video Library | [NASA Image and Video Library](https://images.nasa.gov/) | The **NASA Image Library** modal sends the student's search term to the image API and displays up to 24 matching image records with a thumbnail and descriptive metadata. In views that enable background selection, the student can apply a selected image to the scene. |
 
-## 1. NASA Mission Catalog & Historical Datasets
-* **Mission Dataset:** 76 historical NASA missions compiled in [`nasa_missions_catalog.csv`](file:///Users/md.mehedihasan/Documents/NASAC-2026/nasa_missions_catalog.csv) and [`nasaMissionCatalog.ts`](file:///Users/md.mehedihasan/Documents/NASAC-2026/src/data/nasaMissionCatalog.ts).
-* **Programs Covered:**
-  - **Project Mercury:** Freedom 7, Liberty Bell 7, Friendship 7, Aurora 7, Sigma 7, Faith 7.
-  - **Project Gemini:** Gemini 3 through Gemini 12 (Orbital rendezvous, EVAs, docking).
-  - **Apollo Program:** Apollo 1 through Apollo 17 (Saturn V launch trajectories, lunar descent, CSM docking).
-  - **Skylab & Apollo-Soyuz:** Space station solar observations, international docking.
-  - **Space Transportation System (Shuttle):** STS-1, STS-7, STS-31 (Hubble deployment), STS-51-L, STS-107, STS-135.
-  - **Artemis Program:** Artemis I, Artemis II (Orion deep space trajectory), Artemis III lunar south pole landing.
-  - **Mars Exploration:** Viking 1 & 2, Pathfinder / Sojourner, Spirit, Opportunity, Curiosity, Perseverance / Ingenuity.
-  - **Lagrange & Deep Space Observatories:** Hubble Space Telescope, James Webb Space Telescope (JWST), Nancy Grace Roman, Parker Solar Probe, New Horizons, Voyager 1 & 2.
+## Bundled and curated content
 
----
+| Content | Link | How it is used |
+| --- | --- | --- |
+| Apollo Passive Seismic Experiment (PSE) reference | [Apollo PSE archive](https://pds-geosciences.wustl.edu/missions/apollo/pse.htm) | A bundled JSON list of event dates, coordinates, and magnitudes is plotted on the **3D Moonquake Map**. Students can filter by year and select an event; the animated seismograph is generated from its magnitude and is not a recorded waveform. This is static content, not a live PDS query. |
+| Historical NASA mission profiles | [NASA NSSDC Master Catalog](https://nssdc.gsfc.nasa.gov/nmc/) | A bundled TypeScript catalog powers the **Learning Hub** and campaign experiences, where students explore curated mission summaries, objectives, and operational guides. It is not a live NSSDC import. |
+| Life-support reference values | [NASA BVAD report](https://ntrs.nasa.gov/citations/20150002905) | In the **lunar/Mars outpost simulation**, crew oxygen, water, and food needs inform resource depletion and recycling choices. The game converts these concepts into simplified per-turn percentages and thresholds; it does not read the report at runtime. |
+| Mars weather sample values | [MSL REMS archive](https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/MARS/curiosity/rems.html) and [Perseverance MEDA instrument information](https://science.nasa.gov/mission/mars-2020-perseverance/science-instruments/) | The **NASA Live Observatory** displays a fixed Mars-weather sample (temperature, pressure, wind, and conditions) for context. It is not a live REMS/MEDA feed. |
+| Lunar terrain reference | [LRO LOLA archive](https://pds-geosciences.wustl.edu/missions/lro/lola.htm) | Referenced for lunar elevation, polar terrain, and lighting concepts in rover/outpost scenarios. The game does not load LOLA elevation grids; its terrain and resource rules are simplified. |
+| Lunar water-ice reference | [LCROSS mission results](https://science.nasa.gov/mission/lcross/) | Provides context for the rover's lunar ice-recovery learning scenario. The in-game extraction amount and reward are simplified, not calculated from LCROSS spectra. |
+| Solar weather and radiation references | [NASA DONKI](https://kauai.ccmc.gsfc.nasa.gov/DONKI/) and [LRO CRaTER](https://crater.unh.edu/) | Inform the solar-storm and radiation-shelter scenarios. The event timing and dose/shielding values are scripted game inputs; the app does not query DONKI or ingest CRaTER measurements. |
+| Mars terrain reference | [MGS MOLA archive](https://pds-geosciences.wustl.edu/missions/mgs/mola.html) | Cited for Mars elevation and landing-site context; no MOLA elevation grid is loaded by the game. |
+| Surface power reference | [NASA NTRS KRUSTY records](https://ntrs.nasa.gov/search?q=KRUSTY) | Grounds the outpost's Kilopower option in the NASA/LANL fission-power test program. The game's continuous power output is a simplified gameplay value, not a direct telemetry feed. |
 
-## 2. Scientific Constants & Planetary Physics Models
-The environmental parameters and physical constants used across the Pygame and Three.js engines are grounded in published NASA Glenn Research Center and JPL planetary ephemerides:
-* **Gravity Models:** Earth ($9.81 \text{ m/s}^2$), Moon ($1.62 \text{ m/s}^2$), Mars ($3.72 \text{ m/s}^2$), Titan ($1.35 \text{ m/s}^2$), Europa ($1.315 \text{ m/s}^2$).
-* **Atmospheric Drag & Scale Heights:** NASA Earth Atmosphere Model (US Standard Atmosphere 1976) and Mars atmospheric density profiles.
-* **Thermal & Radiation Environmental Telemetry:** Lunar day/night surface temperature ranges ($-130^\circ\text{C}$ to $+120^\circ\text{C}$), Solar Particle Event (SPE) fluxes, and Galactic Cosmic Radiation (GCR) dosimetric constants (sourced from NASA LRO CRaTER and MSL RAD data).
+## Other APIs and agency data
 
----
+- The **NASA Live Observatory** gets ISS latitude, longitude, altitude, and speed from the [Where the ISS at API](https://api.wheretheiss.at/v1/satellites/25544), refreshing the position every 15 seconds. This is a third-party service, not a NASA or partner-agency data feed.
+- The project does not currently ingest a separate ESA, JAXA, CSA, or ISRO dataset.
+- A Google Sheets / Apps Script endpoint can optionally support the teacher gradebook when configured by the team; it is not required for the local demo.
 
-## 3. NASA Media & Archival Assets
-* **Audio & Communications:** Quindar tones, Houston CapCom transcripts, and launch cadence audio cues synthesized based on Apollo and Shuttle historical air-to-ground voice recordings.
-* **Mission Imagery & Diagrams:** Public-domain mission diagrams, patch designs, and technical schematics from NASA Technical Reports Server (NTRS) and NASA Image and Video Library (`images.nasa.gov`).
-
----
-
-## 4. Open-Source Data Flow Architecture
-```
-NASA NTRS & Open APIs (data.nasa.gov / api.nasa.gov)
-          │
-          ▼
-nasa_missions_catalog.csv (76 Historical Records)
-     ┌────┴─────────────────────────────┐
-     ▼                                  ▼
-Python/Pygame 60 FPS Sim         React 19 Web Companion
-• Trajectory & Staging Math       • Outpost Life Support Sim
-• Real-time Telemetry Loop        • Digital Mission Notebooks
-• Debrief & Causal Autopsy        • Multimodal Audio & Comics
-```
+Some screens also use bundled NASA imagery, educational links, and video embeds. Simulation parameters and outcomes are simplified for play and should not be presented as operational mission data.

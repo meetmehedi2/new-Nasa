@@ -145,7 +145,7 @@ export const OutpostMap: React.FC<OutpostMapProps> = ({
           outputNow: hasKilopower ? 'Output: +35 kW constant continuous power' : 'Not yet constructed (Build in left panel)',
           status: hasKilopower ? 'NOMINAL' : 'WARNING',
           statusColor: hasKilopower ? '#10b981' : '#94a3b8',
-          nasaFact: 'NASA KRUSTY project tested a 1 kWe reactor with a U-235 cast core and Stirling engines (NASA TM-2019-220311).',
+          nasaFact: 'NASA and Los Alamos tested the KRUSTY Kilopower fission system; the game simplifies its power output for resource-management play.',
         };
       case 'rover':
         return {

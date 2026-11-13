@@ -2,7 +2,7 @@
  * allNasaMissions.ts
  * ─────────────────────────────────────────────────────────────────────────────
  * Complete roster of 76 real NASA flight missions from Mercury to Artemis III.
- * Generated from nasa_missions_catalog.csv for Astro Camp / Outpost Command.
+ * Curated mission catalog for the Astro Camp browser campaign.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 

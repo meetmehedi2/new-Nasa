@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "oxlint",
+    "lint": "oxlint src tests/test_simulation.mjs vite.config.ts",
     "test": "node tests/test_simulation.mjs",
     "preview": "vite preview"
   },
