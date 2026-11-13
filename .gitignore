@@ -32,9 +32,17 @@ venv/
 NASA_Projct.zip
 *.zip
 *.blend1
-test_*.mjs
 test_*.png
 live_*.png
 scratch/
-*.py
+
+# Local integration settings and runtime data
+.env
+.env.*
+!.env.example
+/saves/profile.json
+
+# Local inspection output and operational notes
+/dom_inspection_output/
+/Guide_File
 

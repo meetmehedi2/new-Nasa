@@ -5612,7 +5612,12 @@ const MasterCommanderScGame: React.FC<CommanderGameProps> = ({ isMuted, onBack, 
           flexDirection: 'column',
           gap: '8px',
           boxShadow: '0 0 30px rgba(56, 189, 248, 0.25)',
-          minWidth: '290px',
+          width: 'min(440px, calc(100% - 40px))',
+          minWidth: 0,
+          maxHeight: 'calc(100% - 170px)',
+          boxSizing: 'border-box',
+          overflowY: 'auto',
+          overscrollBehavior: 'contain',
           backdropFilter: 'blur(8px)',
         }}
       >
@@ -5705,6 +5710,7 @@ const MasterCommanderScGame: React.FC<CommanderGameProps> = ({ isMuted, onBack, 
 
       {/* Bottom Commander Controls Toolbar */}
       <div
+        className="space-games-commander-toolbar"
         style={{
           position: 'absolute',
           bottom: '16px',
@@ -5714,13 +5720,10 @@ const MasterCommanderScGame: React.FC<CommanderGameProps> = ({ isMuted, onBack, 
           border: '1px solid rgba(56, 189, 248, 0.35)',
           borderRadius: '12px',
           padding: '10px 20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
           backdropFilter: 'blur(8px)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+        <div className="space-games-commander-control-list" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button
             onClick={() => {
               const e = new KeyboardEvent('keydown', { key: ' ' });

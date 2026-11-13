@@ -1,17 +1,16 @@
 /**
  * outpostBalanceConfig.ts
  * =============================================================================
- * Jr_AstroCamp Outpost Simulator — Unified NASA-Cited Balance Configuration
+ * Jr_AstroCamp Outpost Simulator — Science-Informed Balance Configuration
  * NASA International Space Apps Challenge 2026
  * 
- * ALL balance numbers in this configuration are directly derived from official,
- * peer-reviewed NASA and space agency technical baselines.
+ * NASA references inform selected starting values; gameplay values are simplified.
  * 
  * Primary NASA Sources:
  * 1. NASA/TP-2015-218570: Baseline Values and Assumptions Document (BVAD)
  *    - Human Metabolic Rates: Table 3.1, p. 25-26
  *    - ECLSS Mass Balances: Section 4.3.2 (Sabatier CO2 Reduction & Water Recovery)
- * 2. NASA TM-2019-220311 / NASA Glenn: Kilopower KRUSTY Nuclear Reactor Baseline
+ * 2. NASA Glenn / Los Alamos KRUSTY ground-test program
  *    - 1-10 kWe continuous Stirling power generation independent of sunlight
  * 3. NASA SP-2009-566 & LRO LOLA: Lunar Reconnaissance Orbiter Polar Topography
  *    - Shackleton Crater illumination & 354-hour (14.7-day) lunar night
@@ -339,7 +338,7 @@ export const BUILDABLE_MODULES: BuildableModuleSpec[] = [
     buildCostBP: 8,
     description: 'Compact Stirling nuclear reactor delivering constant, reliable electricity 24 hours a day, sun or night.',
     simpleEffect: '+15% Power every single sol — immune to dust storms and darkness!',
-    nasaScienceFact: 'NASA KRUSTY project tested a 1 kWe reactor with a U-235 cast core and Stirling engines (NASA TM-2019-220311).',
+    nasaScienceFact: 'NASA and Los Alamos tested the KRUSTY Kilopower fission system; the game simplifies its power output for resource-management play.',
     icon: '⚛️',
     statDeltas: { power: 35, crewMorale: 5 }
   },

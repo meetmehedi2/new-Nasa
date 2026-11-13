@@ -60,7 +60,7 @@ export const NasaDataModal: React.FC<NasaDataModalProps> = ({ isOpen, onClose })
                 NASA Space Apps Challenge 2026 · Scientific Grounding
               </div>
               <h2 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 800 }}>
-                Verified NASA Datasets, Sources &amp; Technical Reports
+                NASA Data References &amp; Scenario Sources
               </h2>
             </div>
           </div>

@@ -1,40 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { CURRICULUM_MODULES, type CurriculumModulePackage } from '../data/curriculumNotesAudioVideo';
-import { COMIC_BOOK_ISSUES } from '../data/comicBooks';
-import { NotebookIdeaComicArtwork } from './NotebookIdeaComicArtwork';
-import { Printer, CheckCircle2, HelpCircle, Sparkles, Bookmark, BookOpen, ChevronLeft, FileText, Layers } from 'lucide-react';
+import { Printer, CheckCircle2, HelpCircle, Sparkles, Bookmark } from 'lucide-react';
 import { soundFx } from '../utils/audioEffects';
 
 interface HandwrittenNotebookViewProps {
-  initialModuleId?: number | 'ALL';
+  initialModuleId?: number;
   onLaunchMission?: (missionId: string) => void;
-  onOpenComic?: (issueId: string) => void;
 }
 
 export const HandwrittenNotebookView: React.FC<HandwrittenNotebookViewProps> = ({
-  initialModuleId = 'ALL',
+  initialModuleId = 1,
   onLaunchMission,
-  onOpenComic,
 }) => {
-  const [selectedModuleId, setSelectedModuleId] = useState<number | 'ALL'>(initialModuleId);
+  const [selectedModuleId, setSelectedModuleId] = useState<number>(initialModuleId);
   const [userFillIns, setUserFillIns] = useState<Record<string, string>>({});
   const [predictions, setPredictions] = useState<Record<number, string>>({});
   const [debriefs, setDebriefs] = useState<Record<number, string>>({});
   const [showHints, setShowHints] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    if (initialModuleId !== undefined) {
-      setSelectedModuleId(initialModuleId);
-    }
-  }, [initialModuleId]);
-
-  const activeModId = typeof selectedModuleId === 'number' ? selectedModuleId : 1;
   const currentModule: CurriculumModulePackage =
-    CURRICULUM_MODULES.find((m) => m.id === activeModId) || CURRICULUM_MODULES[0];
+    CURRICULUM_MODULES.find((m) => m.id === selectedModuleId) || CURRICULUM_MODULES[0];
   const { notebook } = currentModule;
-  const companionComic = typeof selectedModuleId === 'number' 
-    ? COMIC_BOOK_ISSUES.find((c) => c.issueNumber === selectedModuleId)
-    : undefined;
 
   // Load saved notebook entries from localStorage
   useEffect(() => {
@@ -63,7 +49,7 @@ export const HandwrittenNotebookView: React.FC<HandwrittenNotebookViewProps> = (
   };
 
   const handlePredictionChange = (val: string) => {
-    const updated = { ...predictions, [activeModId]: val };
+    const updated = { ...predictions, [selectedModuleId]: val };
     setPredictions(updated);
     try {
       localStorage.setItem('astrocamp_notebook_predictions', JSON.stringify(updated));
@@ -73,7 +59,7 @@ export const HandwrittenNotebookView: React.FC<HandwrittenNotebookViewProps> = (
   };
 
   const handleDebriefChange = (val: string) => {
-    const updated = { ...debriefs, [activeModId]: val };
+    const updated = { ...debriefs, [selectedModuleId]: val };
     setDebriefs(updated);
     try {
       localStorage.setItem('astrocamp_notebook_debriefs', JSON.stringify(updated));
@@ -92,25 +78,130 @@ export const HandwrittenNotebookView: React.FC<HandwrittenNotebookViewProps> = (
     window.print();
   };
 
+  // Render hand-drawn SVG sketches for notebook ideas
+  const renderIdeaSketch = (sketchType: string) => {
+    switch (sketchType) {
+      case 'ROCKET_FORCES':
+        return (
+          <svg viewBox="0 0 160 120" className="notebook-sketch-svg">
+            <line x1="80" y1="10" x2="80" y2="100" stroke="#475569" strokeWidth="1.5" strokeDasharray="3,3" />
+            <polygon points="75,30 85,30 80,15" fill="#f59e0b" stroke="#000" strokeWidth="1.5" />
+            <rect x="73" y="30" width="14" height="40" fill="#f8fafc" stroke="#000" strokeWidth="1.5" />
+            {/* Thrust Arrow UP */}
+            <line x1="80" y1="15" x2="80" y2="2" stroke="#10b981" strokeWidth="3" markerEnd="url(#arrow)" />
+            <polygon points="77,5 80,0 83,5" fill="#10b981" />
+            <text x="90" y="14" fill="#10b981" fontSize="9" fontWeight="bold">THRUST (F_t)</text>
+            {/* Weight Arrow DOWN */}
+            <line x1="80" y1="70" x2="80" y2="95" stroke="#ef4444" strokeWidth="3" />
+            <polygon points="77,95 80,100 83,95" fill="#ef4444" />
+            <text x="90" y="95" fill="#ef4444" fontSize="9" fontWeight="bold">GRAVITY (W)</text>
+            {/* Drag Arrow DOWN */}
+            <text x="15" y="55" fill="#38bdf8" fontSize="8" fontWeight="bold">DRAG (F_d) ↓</text>
+          </svg>
+        );
+      case 'STAGING_DROP':
+        return (
+          <svg viewBox="0 0 160 120" className="notebook-sketch-svg">
+            {/* Upper Stage Going Up */}
+            <g transform="translate(65, 10)">
+              <polygon points="15,0 10,12 20,12" fill="#ef4444" stroke="#000" strokeWidth="1.5" />
+              <rect x="9" y="12" width="12" height="28" fill="#f8fafc" stroke="#000" strokeWidth="1.5" />
+              <polygon points="9,40 21,40 18,48 12,48" fill="#f59e0b" />
+            </g>
+            {/* Separated Lower Booster Dropping */}
+            <g transform="translate(80, 65) rotate(18)">
+              <rect x="0" y="0" width="14" height="32" fill="#94a3b8" stroke="#000" strokeWidth="1.5" />
+              <text x="-45" y="15" fill="#ef4444" fontSize="8" fontWeight="bold">EMPTY TANK</text>
+              <line x1="-5" y1="12" x2="5" y2="12" stroke="#ef4444" strokeWidth="1.5" />
+            </g>
+          </svg>
+        );
+      case 'ORBIT_FALLING':
+        return (
+          <svg viewBox="0 0 160 120" className="notebook-sketch-svg">
+            <circle cx="80" cy="80" r="38" fill="#0284c7" stroke="#000" strokeWidth="2" />
+            <path d="M 80 42 Q 135 42 135 80 T 80 118 T 25 80 T 80 42" fill="none" stroke="#f59e0b" strokeWidth="2" strokeDasharray="4,3" />
+            <circle cx="135" cy="80" r="4" fill="#fbbf24" stroke="#000" strokeWidth="1.5" />
+            <text x="35" y="25" fill="#f59e0b" fontSize="8.5" fontWeight="bold">7.8 km/s (SIDEWAYS)</text>
+          </svg>
+        );
+      case 'RELATIVE_SPEED':
+        return (
+          <svg viewBox="0 0 160 120" className="notebook-sketch-svg">
+            {/* Two Cars on highway */}
+            <rect x="15" y="25" width="40" height="20" fill="#38bdf8" stroke="#000" strokeWidth="1.5" rx="3" />
+            <text x="18" y="38" fill="#000" fontSize="7" fontWeight="bold">100 km/h</text>
+            <rect x="65" y="25" width="40" height="20" fill="#43ffa0" stroke="#000" strokeWidth="1.5" rx="3" />
+            <text x="68" y="38" fill="#000" fontSize="7" fontWeight="bold">100 km/h</text>
+            <text x="25" y="60" fill="#64748b" fontSize="8">Δv = 0 km/h (STATIONARY!)</text>
+            {/* Spacecraft below */}
+            <circle cx="50" cy="90" r="12" fill="#94a3b8" stroke="#000" strokeWidth="1.5" />
+            <circle cx="95" cy="90" r="10" fill="#cbd5e1" stroke="#000" strokeWidth="1.5" />
+            <line x1="62" y1="90" x2="85" y2="90" stroke="#ef4444" strokeWidth="2" strokeDasharray="2,2" />
+            <text x="35" y="112" fill="#10b981" fontSize="8" fontWeight="bold">CLOSING AT 0.1 M/S</text>
+          </svg>
+        );
+      case 'GRAVITY_COMPARE':
+        return (
+          <svg viewBox="0 0 160 120" className="notebook-sketch-svg">
+            {/* Earth vs Moon vs Mars Gravity Scales */}
+            <rect x="15" y="70" width="30" height="40" fill="#0284c7" stroke="#000" strokeWidth="1.5" />
+            <text x="18" y="60" fill="#0284c7" fontSize="8" fontWeight="bold">EARTH</text>
+            <text x="18" y="95" fill="#fff" fontSize="8">9.8</text>
+
+            <rect x="65" y="95" width="30" height="15" fill="#94a3b8" stroke="#000" strokeWidth="1.5" />
+            <text x="68" y="85" fill="#64748b" fontSize="8" fontWeight="bold">MOON</text>
+            <text x="68" y="106" fill="#000" fontSize="8">1.62</text>
+
+            <rect x="115" y="85" width="30" height="25" fill="#dc2626" stroke="#000" strokeWidth="1.5" />
+            <text x="118" y="75" fill="#dc2626" fontSize="8" fontWeight="bold">MARS</text>
+            <text x="118" y="100" fill="#fff" fontSize="8">3.71</text>
+          </svg>
+        );
+      case 'SPHERICAL_ABERRATION':
+        return (
+          <svg viewBox="0 0 160 120" className="notebook-sketch-svg">
+            {/* Curved primary mirror */}
+            <path d="M 20 20 Q 35 60 20 100" stroke="#38bdf8" strokeWidth="4" fill="none" />
+            {/* Edge rays focusing short */}
+            <line x1="22" y1="25" x2="110" y2="60" stroke="#ef4444" strokeWidth="1.5" />
+            <line x1="22" y1="95" x2="110" y2="60" stroke="#ef4444" strokeWidth="1.5" />
+            <circle cx="110" cy="60" r="3" fill="#ef4444" />
+            <text x="85" y="50" fill="#ef4444" fontSize="7" fontWeight="bold">EDGE FOCUS</text>
+            {/* Center rays focusing long */}
+            <line x1="30" y1="45" x2="145" y2="60" stroke="#10b981" strokeWidth="1.5" />
+            <line x1="30" y1="75" x2="145" y2="60" stroke="#10b981" strokeWidth="1.5" />
+            <circle cx="145" cy="60" r="3" fill="#10b981" />
+            <text x="120" y="75" fill="#10b981" fontSize="7" fontWeight="bold">CENTER FOCUS</text>
+          </svg>
+        );
+      case 'GRAVITY_SLINGSHOT':
+        return (
+          <svg viewBox="0 0 160 120" className="notebook-sketch-svg">
+            <circle cx="85" cy="60" r="24" fill="#ea580c" stroke="#000" strokeWidth="1.5" />
+            <text x="65" y="65" fill="#fff" fontSize="8" fontWeight="bold">JUPITER</text>
+            {/* Slingshot Hyperbola curve */}
+            <path d="M 20 100 Q 80 15 145 35" stroke="#10b981" strokeWidth="2.5" fill="none" strokeDasharray="3,3" />
+            <polygon points="145,30 152,36 144,42" fill="#10b981" />
+            <text x="25" y="30" fill="#10b981" fontSize="8" fontWeight="bold">+ Δv SLINGSHOT</text>
+          </svg>
+        );
+      default:
+        return (
+          <svg viewBox="0 0 160 120" className="notebook-sketch-svg">
+            <rect x="20" y="20" width="120" height="80" fill="none" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4,4" rx="6" />
+            <circle cx="80" cy="60" r="18" fill="#fbbf24" opacity="0.6" />
+            <text x="50" y="65" fill="#000" fontSize="9" fontWeight="bold">DIAGRAM</text>
+          </svg>
+        );
+    }
+  };
+
   return (
     <div className="handwritten-notebook-wrapper">
       {/* ── TOP ACTION & MODULE SELECTOR BAR ────────────────────────────────── */}
       <div className="notebook-toolbar no-print">
         <div className="notebook-module-pills">
-          <button
-            onClick={() => {
-              setSelectedModuleId('ALL');
-              soundFx.playClick(750);
-            }}
-            className={`notebook-pill-btn ${selectedModuleId === 'ALL' ? 'active' : ''}`}
-            style={{
-              borderColor: selectedModuleId === 'ALL' ? 'var(--color-accent)' : 'rgba(255,255,255,0.1)'
-            }}
-          >
-            <Layers size={13} />
-            <strong>ALL COMICS & NOTES (8)</strong>
-          </button>
-
           {CURRICULUM_MODULES.map((mod) => (
             <button
               key={mod.id}
@@ -130,42 +221,13 @@ export const HandwrittenNotebookView: React.FC<HandwrittenNotebookViewProps> = (
         </div>
 
         <div className="notebook-toolbar-actions">
-          {selectedModuleId !== 'ALL' && (
-            <button
-              onClick={() => {
-                soundFx.playClick(750);
-                setSelectedModuleId('ALL');
-              }}
-              className="notebook-back-btn no-print"
-              title="Return to All Comics & Modules Overview"
-            >
-              <ChevronLeft size={14} />
-              <span>All Comics</span>
-            </button>
-          )}
-
-          {onOpenComic && companionComic && (
-            <button
-              onClick={() => {
-                soundFx.playClick(800);
-                onOpenComic(companionComic.id);
-              }}
-              className="notebook-comic-btn"
-              title={`Read companion comic: ${companionComic.title}`}
-            >
-              <BookOpen size={14} />
-              <span>Read Comic #{companionComic.issueNumber}</span>
-            </button>
-          )}
-
           <button onClick={handlePrint} className="notebook-print-btn" title="Print this handwritten notebook sheet as a PDF">
             <Printer size={15} />
             <span>Print Student PDF</span>
           </button>
-
           {onLaunchMission && (
             <button
-              onClick={() => onLaunchMission(`NASA-M00${activeModId}`)}
+              onClick={() => onLaunchMission(`NASA-M00${selectedModuleId}`)}
               className="notebook-launch-btn"
               style={{ background: currentModule.themeColor }}
             >
@@ -176,170 +238,36 @@ export const HandwrittenNotebookView: React.FC<HandwrittenNotebookViewProps> = (
         </div>
       </div>
 
-      {/* ── CONDITIONAL RENDER: ALL COMICS GALLERY OR SINGLE NOTEBOOK PAGE ──── */}
-      {selectedModuleId === 'ALL' ? (
-        /* ── ALL COMICS & NOTEBOOKS GALLERY RACK ── */
-        <div className="notebook-all-gallery-view">
-          {/* Hero Banner */}
-          <div className="notebook-all-header-banner">
-            <div className="notebook-all-header-content">
-              <div className="notebook-all-badge">
-                <Sparkles size={14} />
-                <span>OFFICIAL NASA STEM ARCHIVE · 8 GRAPHIC NOVELS & FIELD LOGS</span>
-              </div>
-              <h2 className="notebook-all-title">
-                All NASA STEM Comics & Field Notebooks
-              </h2>
-              <p className="notebook-all-subtitle">
-                Explore historic NASA breakthroughs across all 8 curriculum modules. 
-                Click on any comic book cover below to enter its <strong>Handwritten Engineering Worksheet</strong>, draw scientific principles, make pre-flight predictions, and fly the mission!
-              </p>
-            </div>
-          </div>
-
-          {/* 8-Comic Grid Rack */}
-          <div className="notebook-all-grid">
-            {CURRICULUM_MODULES.map((mod) => {
-              const comic = COMIC_BOOK_ISSUES.find((c) => c.issueNumber === mod.id);
-              return (
-                <div
-                  key={mod.id}
-                  className="notebook-all-card"
-                  onClick={() => {
-                    soundFx.playClick(850);
-                    setSelectedModuleId(mod.id);
-                  }}
-                >
-                  {/* Real Vintage Comic Cover */}
-                  <div className="notebook-all-card-cover-wrap">
-                    <img
-                      src={`${import.meta.env.BASE_URL}comics/covers/cover_issue_${mod.id}.jpg`}
-                      alt={comic?.title || mod.name}
-                      className="notebook-all-cover-img"
-                    />
-                    <div className="notebook-all-cover-badges">
-                      <span className="notebook-all-issue-tag">
-                        ISSUE #{mod.id < 10 ? `0${mod.id}` : mod.id}
-                      </span>
-                      <span className="notebook-all-badge-pill">
-                        {mod.badge}
-                      </span>
-                    </div>
-                    <div className="notebook-all-hover-overlay">
-                      <div className="notebook-all-hover-pill">
-                        <FileText size={15} />
-                        <span>Open Notes Sheet</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card Content */}
-                  <div className="notebook-all-card-body">
-                    <div className="notebook-all-mission-label">
-                      {mod.notebook.nasaMission}
-                    </div>
-                    <h3 className="notebook-all-card-title">
-                      {comic?.title || mod.notebook.moduleTitle}
-                    </h3>
-                    <div className="notebook-all-card-sub">
-                      {mod.notebook.subtitle}
-                    </div>
-
-                    <div className="notebook-all-card-q">
-                      <Bookmark size={12} className="text-amber-400 shrink-0" />
-                      <span>"{mod.notebook.bigQuestion}"</span>
-                    </div>
-
-                    <div className="notebook-all-ideas-pills">
-                      {mod.notebook.keyIdeas.map((idea, i) => (
-                        <span key={idea.id} className="notebook-all-idea-tag" title={idea.title}>
-                          💡 #{i + 1} {idea.title.split('(')[0].trim()}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="notebook-all-actions" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          soundFx.playClick(900);
-                          setSelectedModuleId(mod.id);
-                        }}
-                        className="notebook-all-enter-btn"
-                        style={{ background: mod.themeColor }}
-                      >
-                        <FileText size={14} />
-                        <span>Enter Notes</span>
-                      </button>
-
-                      {onOpenComic && comic && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            soundFx.playClick(800);
-                            onOpenComic(comic.id);
-                          }}
-                          className="notebook-all-read-comic-btn"
-                          title="Read Graphic Novel"
-                        >
-                          <BookOpen size={14} />
-                          <span>Comic</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+      {/* ── AUTHENTIC LINED/DOT-GRID PAPER NOTEBOOK PAGE ────────────────────── */}
+      <div className="notebook-sheet printable-paper">
+        {/* Binder Ring Holes on the Left Margin */}
+        <div className="notebook-binder-holes">
+          <div className="binder-hole" />
+          <div className="binder-hole" />
+          <div className="binder-hole" />
         </div>
-      ) : (
-        /* ── AUTHENTIC LINED/DOT-GRID PAPER NOTEBOOK PAGE ────────────────────── */
-        <div className="notebook-sheet printable-paper">
-          {/* Binder Ring Holes on the Left Margin */}
-          <div className="notebook-binder-holes">
-            <div className="binder-hole" />
-            <div className="binder-hole" />
-            <div className="binder-hole" />
-          </div>
 
-          {/* Paper Tape Corner / Paper Clip Decoration */}
-          <div className="notebook-washi-tape" style={{ background: `${currentModule.themeColor}dd` }}>
-            JR_ASTROCAMP · NASA STEM LOG
-          </div>
+        {/* Paper Tape Corner / Paper Clip Decoration */}
+        <div className="notebook-washi-tape" style={{ background: `${currentModule.themeColor}dd` }}>
+          JR_ASTROCAMP · NASA STEM LOG
+        </div>
 
-          {/* Top Breadcrumb row */}
-          <div className="notebook-breadcrumb-row no-print">
-            <button
-              type="button"
-              onClick={() => {
-                soundFx.playClick(750);
-                setSelectedModuleId('ALL');
-              }}
-              className="notebook-back-breadcrumb-btn"
-            >
-              <ChevronLeft size={13} />
-              <span>← All Comics & Notes</span>
-            </button>
-            <span className="notebook-handwritten-badge">{notebook.nasaMission}</span>
-          </div>
-
-          {/* Notebook Header */}
-          <div className="notebook-header">
-            <div className="notebook-meta-strip">
-              <div className="notebook-field">
-                <span className="notebook-field-label">STUDENT CADET:</span>
-                <span className="notebook-field-val">____________________</span>
-              </div>
-              <div className="notebook-field">
-                <span className="notebook-field-label">DATE / MISSION:</span>
-                <span className="notebook-handwritten-badge">{notebook.nasaMission}</span>
-              </div>
-              <div className="notebook-field">
-                <span className="notebook-field-label">LEVEL:</span>
-                <span className="notebook-field-val">{notebook.gradeLevel}</span>
-              </div>
+        {/* Notebook Header */}
+        <div className="notebook-header">
+          <div className="notebook-meta-strip">
+            <div className="notebook-field">
+              <span className="notebook-field-label">STUDENT CADET:</span>
+              <span className="notebook-field-val">____________________</span>
             </div>
+            <div className="notebook-field">
+              <span className="notebook-field-label">DATE / MISSION:</span>
+              <span className="notebook-handwritten-badge">{notebook.nasaMission}</span>
+            </div>
+            <div className="notebook-field">
+              <span className="notebook-field-label">LEVEL:</span>
+              <span className="notebook-field-val">{notebook.gradeLevel}</span>
+            </div>
+          </div>
 
           <h2 className="notebook-title">
             📓 {notebook.moduleTitle}
@@ -348,66 +276,6 @@ export const HandwrittenNotebookView: React.FC<HandwrittenNotebookViewProps> = (
             ~ {notebook.subtitle} ~
           </div>
         </div>
-
-        {/* ── COMPANION OFFICIAL REAL RETRO COMIC COVER SHOWCASE ─────────────── */}
-        {companionComic && (
-          <div className="notebook-comic-showcase-strip no-print">
-            <div
-              className="notebook-comic-thumb-card"
-              onClick={() => {
-                soundFx.playClick(900);
-                if (onOpenComic) onOpenComic(companionComic.id);
-              }}
-              title={`Click to read Issue #${companionComic.issueNumber}: ${companionComic.title}`}
-            >
-              <img
-                src={`${import.meta.env.BASE_URL}comics/covers/cover_issue_${companionComic.issueNumber}.jpg`}
-                alt={`${companionComic.title} Official Comic Cover`}
-                className="notebook-comic-thumb-img"
-              />
-              <div className="notebook-comic-thumb-badge">
-                <span>ISSUE #{companionComic.issueNumber}</span>
-              </div>
-              <div className="notebook-comic-thumb-overlay">
-                <BookOpen size={16} />
-                <span>READ COMIC</span>
-              </div>
-            </div>
-
-            <div className="notebook-comic-info-col">
-              <div className="notebook-comic-badge-row">
-                <span className="notebook-comic-heroic-badge">💥 OFFICIAL RETRO GRAPHIC NOVEL</span>
-                <span className="notebook-comic-mission-badge">{companionComic.nasaMissionTieIn}</span>
-                <span className="notebook-comic-grade-badge">{companionComic.gradeLevel}</span>
-              </div>
-              <h3 className="notebook-comic-headline">
-                {companionComic.title}: <span className="notebook-comic-headline-sub">{companionComic.subtitle}</span>
-              </h3>
-              <p className="notebook-comic-synopsis">
-                {companionComic.synopsis}
-              </p>
-              <div className="notebook-comic-cta-row">
-                {onOpenComic && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      soundFx.playClick(900);
-                      onOpenComic(companionComic.id);
-                    }}
-                    className="notebook-comic-cta-btn"
-                    style={{ background: currentModule.themeColor }}
-                  >
-                    <BookOpen size={15} />
-                    <span>Open Graphic Novel (Issue #{companionComic.issueNumber})</span>
-                  </button>
-                )}
-                <span className="notebook-comic-citation">
-                  Curriculum Tie-In · Verified NASA Flight Archive
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* ── THE BIG QUESTION BOX (Highlighter Accent) ───────────────────────── */}
         <div className="notebook-big-question-box">
@@ -438,13 +306,9 @@ export const HandwrittenNotebookView: React.FC<HandwrittenNotebookViewProps> = (
                     <h4 className="notebook-idea-title">{idea.title}</h4>
                   </div>
 
-                  {/* Authentic Comic Style Illustration Panel */}
+                  {/* Hand-Drawn Diagram Sketch Frame */}
                   <div className="notebook-sketch-frame">
-                    <NotebookIdeaComicArtwork 
-                      sketchType={idea.sketchType} 
-                      moduleId={selectedModuleId} 
-                      ideaNumber={idx + 1} 
-                    />
+                    {renderIdeaSketch(idea.sketchType)}
                   </div>
 
                   <p className="notebook-idea-desc">
@@ -497,7 +361,7 @@ export const HandwrittenNotebookView: React.FC<HandwrittenNotebookViewProps> = (
             </div>
             <div className="notebook-prompt-text">{notebook.predictionPrompt}</div>
             <textarea
-              value={predictions[activeModId] || ''}
+              value={predictions[selectedModuleId] || ''}
               onChange={(e) => handlePredictionChange(e.target.value)}
               placeholder="Write your hypothesis here before launching the simulator..."
               className="notebook-handwritten-textarea"
@@ -512,7 +376,7 @@ export const HandwrittenNotebookView: React.FC<HandwrittenNotebookViewProps> = (
             </div>
             <div className="notebook-prompt-text">{notebook.debriefPrompt}</div>
             <textarea
-              value={debriefs[activeModId] || ''}
+              value={debriefs[selectedModuleId] || ''}
               onChange={(e) => handleDebriefChange(e.target.value)}
               placeholder="Record your telemetry, fuel margin, and what actually happened..."
               className="notebook-handwritten-textarea"
@@ -540,7 +404,6 @@ export const HandwrittenNotebookView: React.FC<HandwrittenNotebookViewProps> = (
           <span style={{ float: 'right' }}>Team Mysterio · Junior Astronaut STEM Curriculum</span>
         </div>
       </div>
-      )}
     </div>
   );
 };

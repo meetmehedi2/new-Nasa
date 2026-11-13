@@ -44,7 +44,6 @@ export const TeacherGradebookModal: React.FC<TeacherGradebookModalProps> = ({
   currentUser,
   isFullPage = false,
 }) => {
-  if (!isOpen && !isFullPage) return null;
   const [activeTab, setActiveTab] = useState<'GRADEBOOK' | 'ANALYTICS' | 'DIRECTIVES' | 'REPORT_CARD' | 'REALTIME_LOGS'>('GRADEBOOK');
   const [students, setStudents] = useState<StudentScoreRecord[]>(() => studentScoreService.getStudents());
   const [realtimeLogs, setRealtimeLogs] = useState<StudentActivityLog[]>(() => studentActivityService.getLogs());
@@ -63,7 +62,7 @@ export const TeacherGradebookModal: React.FC<TeacherGradebookModalProps> = ({
   const [editingNoteStudentId, setEditingNoteStudentId] = useState<string | null>(null);
   const [tempNoteText, setTempNoteText] = useState('');
 
-  if (!isOpen) return null;
+  if (!isOpen && !isFullPage) return null;
 
   const handleBonusXp = (studentId: string, amount: number) => {
     soundFx.playLootPickup();

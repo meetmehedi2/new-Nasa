@@ -1,7 +1,6 @@
 // ============================================================
 // Astro Camp — Mission Game Data
-// Maps all 76 NASA missions (from nasa_missions_catalog.csv)
-// to game types + tuned parameters
+// Maps all 76 curated NASA mission profiles to game types and tuned parameters.
 // ============================================================
 
 export type GameType =

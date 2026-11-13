@@ -261,7 +261,7 @@ export const GameLandingHomePage: React.FC<GameLandingHomePageProps> = ({
             textShadow: '0 0 45px rgba(56, 189, 248, 0.45)',
           }}
         >
-          Jr_<span style={{ color: '#f97316', textShadow: '0 0 35px rgba(249, 115, 22, 0.6)' }}>AstroCamp</span>
+          Jr. <span style={{ color: '#f97316', textShadow: '0 0 35px rgba(249, 115, 22, 0.6)' }}>AstroCamp</span>
         </h1>
 
         {/* Requirement 2: Subtitle = ONE line: "Keep your crew alive on the Moon or Mars!" */}
@@ -284,16 +284,11 @@ export const GameLandingHomePage: React.FC<GameLandingHomePageProps> = ({
         {/* Big pulsing orange START LEARNING button */}
         <button
           onClick={() => {
-            if (!currentUser) {
-              soundFx.playClick(750);
-              onOpenAuth?.();
+            soundFx.playReactorStart();
+            if (onOpenLearningDiscovery) {
+              onOpenLearningDiscovery();
             } else {
-              soundFx.playReactorStart();
-              if (onOpenLearningDiscovery) {
-                onOpenLearningDiscovery();
-              } else {
-                onNavigate('learning');
-              }
+              onNavigate('learning');
             }
           }}
           className="game-hero-start-btn"
@@ -316,7 +311,7 @@ export const GameLandingHomePage: React.FC<GameLandingHomePageProps> = ({
             transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
             marginBottom: '20px',
           }}
-          title={currentUser ? "Enter 4 Learning Stacks (Space Place Dossier & OR-Graph)" : "Sign In or Register to Start Learning"}
+          title="Explore video, audio, comics, handwritten notes, and gameplay"
         >
           <Rocket size={26} />
           <span>START LEARNING</span>
@@ -747,7 +742,7 @@ export const GameLandingHomePage: React.FC<GameLandingHomePageProps> = ({
               {howToPlayTab === 'VOCAB' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <div style={{ background: 'rgba(2, 132, 199, 0.15)', border: '1px solid #0284c7', borderRadius: '12px', padding: '12px 16px', fontSize: '13px', color: '#e0f2fe' }}>
-                    💡 <strong>Kids & Teen Astronaut Translation:</strong> Simple words in the game, but every mechanic is calibrated directly from real NASA engineering manuals!
+                    💡 <strong>Kids & Teen Astronaut Translation:</strong> Simple language introduces mission ideas. Scenarios are informed by NASA references, with values simplified for learning—not operational or real-time measurements.
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -914,7 +909,7 @@ export const GameLandingHomePage: React.FC<GameLandingHomePageProps> = ({
                   🚀 NASA Space Apps Challenge 2026
                 </h3>
                 <p style={{ fontSize: '12.5px', color: '#cbd5e1', lineHeight: 1.5, margin: 0 }}>
-                  Built for the global challenge <em>"Build a Junior Astronaut Mission Trainer"</em>. Designed to give students aged 10–16 hands-on experience running a lunar or Martian outpost, balancing real life-support trade-offs.
+                  Built for the global challenge <em>"Build a Junior Astronaut Mission Trainer"</em>.                   Designed to give students aged 10–16 hands-on practice with lunar and Martian outpost decisions using simplified life-support scenarios informed by NASA references.
                 </p>
                 <div style={{ marginTop: '10px', fontSize: '12px', color: '#38bdf8', fontWeight: 700 }}>
                   Created with passion by <strong>Team Mysterio</strong>.
@@ -923,7 +918,7 @@ export const GameLandingHomePage: React.FC<GameLandingHomePageProps> = ({
 
               <div style={{ background: '#091433', border: '1px solid #1e3a8a', borderRadius: '14px', padding: '16px' }}>
                 <h3 style={{ fontSize: '14px', fontWeight: 800, color: '#f8fafc', margin: '0 0 8px 0' }}>
-                  🔬 Official NASA Data Sources & Calibration
+                  🔬 NASA Sources & Scenario References
                 </h3>
                 <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '12.5px', color: '#cbd5e1', lineHeight: 1.6 }}>
                   <li><strong>NASA BVAD (Baseline Values for Exploration):</strong> Human metabolic consumption rates: 0.84 kg O2/day, 2.50 L water/day, 0.62 kg dry food/day.</li>
@@ -932,6 +927,9 @@ export const GameLandingHomePage: React.FC<GameLandingHomePageProps> = ({
                   <li><strong>NASA Kilopower STMD:</strong> Compact 1–10 kWe fission Stirling reactor power systems for deep space habitats.</li>
                   <li><strong>NASA ECLSS & ISS:</strong> Water recovery system (WRS) achieving 98%+ closed-loop water recovery.</li>
                 </ul>
+                <p style={{ fontSize: '12px', color: '#94a3b8', lineHeight: 1.5, margin: '10px 0 0' }}>
+                  These references inform educational scenarios; game values are simplified and are not raw telemetry or live environmental feeds.
+                </p>
               </div>
 
               {/* Requirement 8: NASA Background Image Credits */}
